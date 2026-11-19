@@ -5,6 +5,8 @@ API requests and GraphQL points. Each shows usage, the remaining allowance, and
 its local reset time. Both refresh every minute from one quota check.
 The app includes an Always on top checkbox.
 
+![GitHub rate gauge application](application.png)
+
 Minimize the window to keep it running in the notification area near the clock.
 Hover over its icon to see both quota readings and any refresh failure. Double-click
 the icon, or choose **Open** from its right-click menu, to restore the window.
