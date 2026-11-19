@@ -1,17 +1,20 @@
-# GitHub rate gauge
+# GitHub Rate Gauge
 
 A small Python/Tkinter desktop app with side-by-side gauges for GitHub core REST
 API requests and GraphQL points. Each shows usage, the remaining allowance, and
 its local reset time. Both refresh every minute from one quota check.
 The app includes an Always on top checkbox.
 
-![GitHub rate gauge application](application.png)
+![GitHub Rate Gauge application](application.png)
 
 Minimize the window to keep it running in the notification area near the clock.
 Hover over its icon to see both quota readings and any refresh failure. Double-click
 the icon, or choose **Open** from its right-click menu, to restore the window.
 Choose **Quit** from that menu to exit. The window's close button also exits.
 Windows may put the icon behind the hidden icons arrow.
+
+One instance runs per Windows session. Launching the app again restores the
+existing window, including when it is minimized to the tray.
 
 Requires Python with Tkinter and GitHub CLI (`gh`), authenticated with the account
 you want to monitor.

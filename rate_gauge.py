@@ -14,6 +14,7 @@ import tkinter.font as tkfont
 from datetime import datetime
 from pathlib import Path
 
+from single_instance import SingleInstance
 from tray import TrayController
 
 REFRESH_MS = 60_000
@@ -59,7 +60,7 @@ class QuotaGauge(tk.LabelFrame):
             self,
             width=400,
             height=230,
-            bg=PAPER,
+            bg=BACKGROUND,
             relief=tk.SUNKEN,
             borderwidth=2,
             highlightthickness=0,
@@ -106,7 +107,7 @@ class QuotaGauge(tk.LabelFrame):
         self.count = tk.Label(
             self,
             text="Reading quota...",
-            bg=PAPER,
+            bg=BACKGROUND,
             fg=INK,
             relief=tk.SUNKEN,
             padx=6,
@@ -140,9 +141,10 @@ class QuotaGauge(tk.LabelFrame):
 
 
 class RateGauge:
-    def __init__(self, root):
+    def __init__(self, root, instance=None):
         self.root = root
-        root.title("GitHub rate gauge")
+        self.instance = instance
+        root.title("GitHub Rate Gauge")
         if os.name == "nt":
             root.iconbitmap(str(DATA_ROOT / "assets" / "gauge.ico"))
         else:
@@ -257,6 +259,8 @@ class RateGauge:
         self.root.focus_force()
 
     def poll_tray_actions(self):
+        if self.instance is not None and self.instance.activation_requested():
+            self.restore()
         try:
             while not self.closing:
                 self.tray_actions.get_nowait()()
@@ -276,7 +280,7 @@ class RateGauge:
     def update_tray_tooltip(self, failed):
         if self.tray is None:
             return
-        lines = ["GitHub rate gauge"]
+        lines = ["GitHub Rate Gauge"]
         for resource, label in (("core", "REST"), ("graphql", "GraphQL")):
             used = self.gauges[resource].used
             value = f"{used:,}" if used is not None else "Unavailable"
@@ -365,15 +369,21 @@ def main():
         if args.wsl_distro:
             GH_COMMAND.extend(["--distribution", args.wsl_distro])
         GH_COMMAND.extend(["--exec", "gh"])
-    if os.name == "nt":
-        import ctypes
+    instance = SingleInstance()
+    if not instance.acquire():
+        return 0
+    try:
+        if os.name == "nt":
+            import ctypes
 
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-            "Knarkoffer.GitHubRateGauge"
-        )
-    window = tk.Tk()
-    RateGauge(window)
-    window.mainloop()
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                "Knarkoffer.GitHubRateGauge"
+            )
+        window = tk.Tk()
+        RateGauge(window, instance)
+        window.mainloop()
+    finally:
+        instance.release()
 
 
 if __name__ == "__main__":

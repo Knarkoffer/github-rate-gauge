@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0 - 2026-11-19
+
+Added by: Knarkoffer
+
+### Added
+
+- Keep one application instance per Windows session and restore the running
+  gauge on subsequent launches, including when it is hidden in the tray.
+
+### Changed
+
+- Use "GitHub Rate Gauge" consistently in the window title, tray tooltip,
+  notifications, and README.
+- Match both gauge faces and counters to the window's gray background (#c0c0c0).
+
 ## 0.1.0 - 2026-11-19
 
 Added by: Knarkoffer

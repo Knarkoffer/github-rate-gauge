@@ -24,7 +24,7 @@ dev = [
 github-rate-gauge = "rate_gauge:main"
 
 [tool.setuptools]
-py-modules = ["rate_gauge", "tray"]
+py-modules = ["rate_gauge", "single_instance", "tray"]
 
 [tool.setuptools.dynamic]
 version = { file = "VERSION" }

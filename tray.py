@@ -15,7 +15,7 @@ class TrayController:
         self._icon = pystray.Icon(
             "github_rate_gauge",
             icon_image,
-            "GitHub rate gauge - Checking quota...",
+            "GitHub Rate Gauge - Checking quota...",
             menu=pystray.Menu(
                 pystray.MenuItem("Open", self._open, default=True),
                 pystray.MenuItem("Quit", self._quit),
@@ -44,7 +44,7 @@ class TrayController:
             self._icon.notify(
                 "Still running. Double-click the icon near the clock to reopen. "
                 "Check the hidden icons arrow if you cannot see it.",
-                "GitHub rate gauge",
+                "GitHub Rate Gauge",
             )
         except (AttributeError, NotImplementedError, OSError):
             pass
