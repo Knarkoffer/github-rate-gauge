@@ -14,6 +14,12 @@ import tkinter.font as tkfont
 from datetime import datetime
 from pathlib import Path
 
+from preferences import (
+    Preferences,
+    PreferencesStore,
+    restore_window_position,
+    window_position,
+)
 from single_instance import SingleInstance
 from tray import TrayController
 
@@ -141,9 +147,13 @@ class QuotaGauge(tk.LabelFrame):
 
 
 class RateGauge:
-    def __init__(self, root, instance=None):
+    def __init__(self, root, instance=None, preferences_store=None):
         self.root = root
         self.instance = instance
+        self.preferences_store = preferences_store or PreferencesStore()
+        self.preferences = self.preferences_store.load()
+        self.saved_preferences = self.preferences
+        self.save_timer = None
         root.title("GitHub Rate Gauge")
         if os.name == "nt":
             root.iconbitmap(str(DATA_ROOT / "assets" / "gauge.ico"))
@@ -198,13 +208,13 @@ class RateGauge:
             self.gauges[resource] = gauge
         controls = tk.Frame(panel)
         controls.pack(fill=tk.X, padx=12, pady=(0, 10))
-        self.always_on_top = tk.BooleanVar(root, value=False)
+        self.always_on_top = tk.BooleanVar(root, value=self.preferences.always_on_top)
         self.topmost_checkbox = tk.Checkbutton(
             controls,
             text="Always on top",
             variable=self.always_on_top,
             selectcolor=PAPER,
-            command=lambda: root.attributes("-topmost", self.always_on_top.get()),
+            command=self.apply_topmost,
         )
         self.topmost_checkbox.pack(side=tk.LEFT)
         self.button = tk.Button(
@@ -237,7 +247,40 @@ class RateGauge:
         )
         self.status.pack(fill=tk.X, padx=3, pady=(0, 3))
         root.bind("<Alt-r>", lambda event: self.button.invoke())
+        if self.preferences.position is not None:
+            restore_window_position(root, self.preferences.position)
+        root.attributes("-topmost", self.always_on_top.get())
+        root.bind("<Configure>", self.remember_preferences, add="+")
         self.refresh()
+
+    def apply_topmost(self):
+        self.root.attributes("-topmost", self.always_on_top.get())
+        self.remember_preferences()
+
+    def remember_preferences(self, event=None):
+        if self.closing or (event is not None and event.widget is not self.root):
+            return
+        position = self.preferences.position
+        if self.root.state() == "normal":
+            position = window_position(self.root)
+        preferences = Preferences(position, self.always_on_top.get())
+        if preferences == self.preferences:
+            return
+        self.preferences = preferences
+        if self.save_timer is not None:
+            self.root.after_cancel(self.save_timer)
+        self.save_timer = self.root.after(500, self.save_preferences)
+
+    def save_preferences(self):
+        self.save_timer = None
+        if self.preferences == self.saved_preferences:
+            return
+        try:
+            self.preferences_store.save(self.preferences)
+        except OSError as error:
+            self.status.configure(text=f"Could not save window settings. {error}")
+        else:
+            self.saved_preferences = self.preferences
 
     def window_unmapped(self, event):
         if event.widget is self.root:
@@ -252,9 +295,12 @@ class RateGauge:
     def restore(self):
         if self.closing:
             return
+        position = self.preferences.position
         self.tray.hide()
         self.root.deiconify()
         self.root.state("normal")
+        if position is not None:
+            restore_window_position(self.root, position)
         self.root.lift()
         self.root.focus_force()
 
@@ -272,7 +318,11 @@ class RateGauge:
     def close(self):
         if self.closing:
             return
+        self.remember_preferences()
         self.closing = True
+        if self.save_timer is not None:
+            self.root.after_cancel(self.save_timer)
+        self.save_preferences()
         if self.tray is not None:
             self.tray.stop()
         self.root.destroy()

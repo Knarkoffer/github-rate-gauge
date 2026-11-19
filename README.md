@@ -16,6 +16,11 @@ Windows may put the icon behind the hidden icons arrow.
 One instance runs per Windows session. Launching the app again restores the
 existing window, including when it is minimized to the tray.
 
+The window position and **Always on top** preference are remembered in
+`%LOCALAPPDATA%\GitHubRateGauge\settings.json`. Changes save automatically.
+If your monitor layout changes, the saved position is adjusted to keep the
+window on a visible screen.
+
 Requires Python with Tkinter and GitHub CLI (`gh`), authenticated with the account
 you want to monitor.
 

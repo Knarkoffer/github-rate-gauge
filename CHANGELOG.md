@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0 - 2026-11-19
+
+Added by: Knarkoffer
+
+### Added
+
+- Remember the window position and Always on top preference between launches
+  in %LOCALAPPDATA%\GitHubRateGauge\settings.json.
+- Restore saved positions onto a visible monitor work area after display
+  layout changes, including monitors with negative desktop coordinates.
+- Save preferences automatically after changes and when exiting.
+
 ## 0.2.0 - 2026-11-19
 
 Added by: Knarkoffer
