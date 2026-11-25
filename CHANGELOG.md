@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1 - 2026-11-25
+
+Added by: Knarkoffer
+
+### Fixed
+
+- Make WSL launch examples work from the repository folder without personal
+  filesystem paths.
+
 ## 0.3.0 - 2026-11-19
 
 Added by: Knarkoffer

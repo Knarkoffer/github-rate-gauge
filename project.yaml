@@ -1,0 +1,46 @@
+title: GitHub Rate Gauge
+status: active
+type: application
+primary_language: python
+languages:
+  - python
+tags:
+  - github
+  - github-api
+  - graphql
+  - rate-limit
+  - system-tray
+  - usage-monitor
+  - windows
+  - wsl
+libraries:
+  python:
+    - argparse
+    - ctypes
+    - ctypes:wintypes
+    - dataclasses:asdict
+    - dataclasses:dataclass
+    - datetime:datetime
+    - functools:cache
+    - gc
+    - json
+    - math
+    - os
+    - pathlib:Path
+    - PIL:Image
+    - pystray
+    - queue
+    - shutil
+    - subprocess
+    - sys
+    - tempfile
+    - threading
+    - time
+    - tkinter
+    - tkinter.font
+    - unittest
+    - unittest.mock:patch
+    - uuid:uuid4
+github:
+  owner: Knarkoffer
+  repo: github-rate-gauge

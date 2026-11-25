@@ -48,17 +48,17 @@ Run from this folder on Windows with:
 .venv\Scripts\python.exe rate_gauge.py
 ```
 
-Run from WSL with:
+Run from this folder in WSL with:
 
 ```bash
-wscript.exe 'C:\DATA\Private\GIT\github-rate-gauge\Launch GitHub Rate Gauge.vbs'
+wscript.exe "$(wslpath -w "$PWD/Launch GitHub Rate Gauge.vbs")"
 ```
 
 This launches the app hidden and returns control to the WSL terminal immediately.
 To run attached to the terminal, use:
 
 ```bash
-python3 /mnt/c/DATA/Private/GIT/github-rate-gauge/rate_gauge.py
+python3 rate_gauge.py
 ```
 
 When launched from WSL, the app opens using Windows Python so Always on top
